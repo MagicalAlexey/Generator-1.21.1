@@ -35,11 +35,11 @@ package ${package}.item;
 
 import net.minecraft.network.chat.Component;
 
-public class ${name}Item extends RecordItem {
+public class ${name}Item extends Item {
 
 	public ${name}Item() {
-		super(${data.analogOutput}, () -> BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse("${data.music}" )),
-			new Item.Properties().stacksTo(1).rarity(Rarity.${data.rarity}), ${data.lengthInTicks});
+		super(
+			new Item.Properties().stacksTo(1).rarity(Rarity.${data.rarity}).jukeboxPlayable(${name}JukeboxSong.${name}));
 	}
 
 	<@addSpecialInformation data.specialInformation/>
