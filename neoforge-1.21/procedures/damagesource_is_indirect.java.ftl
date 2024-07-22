@@ -1,1 +1,1 @@
-(${input$damagesource}.isIndirect())
+(!${input$damagesource}.isDirect())

@@ -1,8 +1,8 @@
 <#function toResourceLocation string>
     <#if string?matches('"[^+]*"')>
-        <#return "ResourceLocation.withDefaultNamespace(" + string?lower_case + ")">
+        <#return "ResourceLocation.parse(" + string?lower_case + ")">
     <#else>
-        <#return "ResourceLocation.withDefaultNamespace((" + string + ").toLowerCase(java.util.Locale.ENGLISH))">
+        <#return "ResourceLocation.parse((" + string + ").toLowerCase(java.util.Locale.ENGLISH))">
     </#if>
 </#function>
 
@@ -16,7 +16,16 @@
     <#elseif slot == "/*@int*/3">
         <#return "EquipmentSlot.HEAD">
     <#else>
-        <#return "EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, ${opt.toInt(slot)})">
+        <#return "new Object(){
+            public static EquipmentSlot armorSlotByIndex(int _slotindex) {
+                for (EquipmentSlot _slot : EquipmentSlot.values()) {
+                    if (_slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && _slot.getIndex() == _slotindex) {
+                        return _slot;
+                    }
+                }
+                throw new IllegalArgumentException(\"Invalid slot index: \" + _slotindex);
+            }
+        }.armorSlotByIndex(${opt.toInt(slot)})">
     </#if>
 </#function>
 
