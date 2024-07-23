@@ -68,6 +68,91 @@ import net.minecraft.client.model.Model;
 		});
 	}
 
+	<#if (data.helmetModelName != "Default" && data.getHelmetModel()??) || (data.bodyModelName != "Default" && data.getBodyModel()??) ||
+		 (data.leggingsModelName != "Default" && data.getLeggingsModel()??) || (data.bootsModelName != "Default" && data.getBootsModel()??)>
+	@SubscribeEvent public static void registerItemExtensions(RegisterClientExtensionsEvent event) {
+		<#if data.helmetModelName != "Default" && data.getHelmetModel()??>
+		event.registerItem(new IClientItemExtensions() {
+			@Override public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
+					"head", new ${data.helmetModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.helmetModelName}.LAYER_LOCATION)).${data.helmetModelPart},
+					"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap())
+				)));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, ${JavaModName}Items.${data.getModElement().getRegistryNameUpper()}_HELMET.get());
+		</#if>
+
+		<#if data.bodyModelName != "Default" && data.getBodyModel()??>
+		event.registerItem(new IClientItemExtensions() {
+			@Override @OnlyIn(Dist.CLIENT) public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
+					"body", new ${data.bodyModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bodyModelName}.LAYER_LOCATION)).${data.bodyModelPart},
+					"left_arm", new ${data.bodyModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bodyModelName}.LAYER_LOCATION)).${data.armsModelPartL},
+					"right_arm", new ${data.bodyModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bodyModelName}.LAYER_LOCATION)).${data.armsModelPartR},
+					"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap())
+				)));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, ${JavaModName}Items.${data.getModElement().getRegistryNameUpper()}_CHESTPLATE.get());
+		</#if>
+
+		<#if data.leggingsModelName != "Default" && data.getLeggingsModel()??>
+		event.registerItem(new IClientItemExtensions() {
+			@Override @OnlyIn(Dist.CLIENT) public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
+					"left_leg", new ${data.leggingsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.leggingsModelName}.LAYER_LOCATION)).${data.leggingsModelPartL},
+					"right_leg", new ${data.leggingsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.leggingsModelName}.LAYER_LOCATION)).${data.leggingsModelPartR},
+					"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap())
+				)));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, ${JavaModName}Items.${data.getModElement().getRegistryNameUpper()}_LEGGINGS.get());
+		</#if>
+
+		<#if data.bootsModelName != "Default" && data.getBootsModel()??>
+		event.registerItem(new IClientItemExtensions() {
+			@Override @OnlyIn(Dist.CLIENT) public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
+					"left_leg", new ${data.bootsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bootsModelName}.LAYER_LOCATION)).${data.bootsModelPartL},
+					"right_leg", new ${data.bootsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bootsModelName}.LAYER_LOCATION)).${data.bootsModelPartR},
+					"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+					"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap())
+				)));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, ${JavaModName}Items.${data.getModElement().getRegistryNameUpper()}_BOOTS.get());
+		</#if>
+	}
+	</#if>
+
 	public ${name}Item(ArmorItem.Type type, Item.Properties properties) {
 		super(ARMOR_MATERIAL, type, properties);
 	}
@@ -78,28 +163,6 @@ import net.minecraft.client.model.Model;
 		public Helmet() {
 			super(ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(${data.maxDamage}))<#if data.helmetImmuneToFire>.fireResistant()</#if>);
 		}
-
-		<#if data.helmetModelName != "Default" && data.getHelmetModel()??>
-		@Override public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-			consumer.accept(new IClientItemExtensions() {
-				@Override public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-					HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
-							"head", new ${data.helmetModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.helmetModelName}.LAYER_LOCATION)).${data.helmetModelPart},
-							"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap())
-					)));
-					armorModel.crouching = living.isShiftKeyDown();
-					armorModel.riding = defaultModel.riding;
-					armorModel.young = living.isBaby();
-					return armorModel;
-				}
-			});
-		}
-		</#if>
 
 		<#if data.helmetModelTexture?has_content && data.helmetModelTexture != "From armor">
 		@Override public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
@@ -122,28 +185,6 @@ import net.minecraft.client.model.Model;
 			super(ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(${data.maxDamage}))<#if data.bodyImmuneToFire>.fireResistant()</#if>);
 		}
 
-		<#if data.bodyModelName != "Default" && data.getBodyModel()??>
-		@Override public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-			consumer.accept(new IClientItemExtensions() {
-				@Override @OnlyIn(Dist.CLIENT) public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-					HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
-							"body", new ${data.bodyModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bodyModelName}.LAYER_LOCATION)).${data.bodyModelPart},
-							"left_arm", new ${data.bodyModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bodyModelName}.LAYER_LOCATION)).${data.armsModelPartL},
-							"right_arm", new ${data.bodyModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bodyModelName}.LAYER_LOCATION)).${data.armsModelPartR},
-							"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap())
-					)));
-					armorModel.crouching = living.isShiftKeyDown();
-					armorModel.riding = defaultModel.riding;
-					armorModel.young = living.isBaby();
-					return armorModel;
-				}
-			});
-		}
-		</#if>
-
 		<#if data.bodyModelTexture?has_content && data.bodyModelTexture != "From armor">
 		@Override public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
 			return ResourceLocation.parse("${modid}:textures/entities/${data.bodyModelTexture}");
@@ -165,28 +206,6 @@ import net.minecraft.client.model.Model;
 			super(ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(${data.maxDamage}))<#if data.leggingsImmuneToFire>.fireResistant()</#if>);
 		}
 
-		<#if data.leggingsModelName != "Default" && data.getLeggingsModel()??>
-		@Override public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-			consumer.accept(new IClientItemExtensions() {
-				@Override @OnlyIn(Dist.CLIENT) public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-					HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
-							"left_leg", new ${data.leggingsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.leggingsModelName}.LAYER_LOCATION)).${data.leggingsModelPartL},
-							"right_leg", new ${data.leggingsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.leggingsModelName}.LAYER_LOCATION)).${data.leggingsModelPartR},
-							"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap())
-					)));
-					armorModel.crouching = living.isShiftKeyDown();
-					armorModel.riding = defaultModel.riding;
-					armorModel.young = living.isBaby();
-					return armorModel;
-				}
-			});
-		}
-		</#if>
-
 		<#if data.leggingsModelTexture?has_content && data.leggingsModelTexture != "From armor">
 		@Override public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
 			return ResourceLocation.parse("${modid}:textures/entities/${data.leggingsModelTexture}");
@@ -207,28 +226,6 @@ import net.minecraft.client.model.Model;
 		public Boots() {
 			super(ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(${data.maxDamage}))<#if data.bootsImmuneToFire>.fireResistant()</#if>);
 		}
-
-		<#if data.bootsModelName != "Default" && data.getBootsModel()??>
-		@Override public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-			consumer.accept(new IClientItemExtensions() {
-				@Override @OnlyIn(Dist.CLIENT) public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-					HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
-							"left_leg", new ${data.bootsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bootsModelName}.LAYER_LOCATION)).${data.bootsModelPartL},
-							"right_leg", new ${data.bootsModelName}(Minecraft.getInstance().getEntityModels().bakeLayer(${data.bootsModelName}.LAYER_LOCATION)).${data.bootsModelPartR},
-							"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-							"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap())
-					)));
-					armorModel.crouching = living.isShiftKeyDown();
-					armorModel.riding = defaultModel.riding;
-					armorModel.young = living.isBaby();
-					return armorModel;
-				}
-			});
-		}
-		</#if>
 
 		<#if data.bootsModelTexture?has_content && data.bootsModelTexture != "From armor">
 		@Override public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {

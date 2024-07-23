@@ -145,8 +145,8 @@ public class ${JavaModName}Items {
 					);
 					</#list>
 				<#elseif item.getModElement().getTypeString() == "tool" && item.toolType == "Shield">
-					ItemProperties.register(${item.getModElement().getRegistryNameUpper()}.get(), ResourceLocation.parse("blocking"),
-						ItemProperties.getProperty(new ItemStack(Items.SHIELD), ResourceLocation.parse("blocking")));
+					ItemProperties.register(${item.getModElement().getRegistryNameUpper()}.get(), ResourceLocation.parse("minecraft:blocking"),
+						ItemProperties.getProperty(new ItemStack(Items.SHIELD), ResourceLocation.parse("minecraft:blocking")));
 				</#if>
 			</#list>
 			</#compress>
