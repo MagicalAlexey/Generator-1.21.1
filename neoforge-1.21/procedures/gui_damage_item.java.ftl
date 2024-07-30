@@ -1,10 +1,8 @@
-if(${input$entity} instanceof Player _player && _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
+if(${input$entity} instanceof Player _player && _player.level() instanceof ServerLevel _serverLevel
+		&& _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
 	ItemStack stack = ((Slot) _slots.get(${opt.toInt(input$slotid)})).getItem();
 	if(stack != null) {
-		stack.hurtAndBreak(${opt.toInt(input$amount)}, RandomSource.create(), null, () -> {
-			stack.shrink(1);
-			stack.setDamageValue(0);
-		});
+		stack.hurtAndBreak(${opt.toInt(input$amount)}, _serverLevel, null, _stkprov -> {});
 		_player.containerMenu.broadcastChanges();
 	}
 }
