@@ -38,6 +38,9 @@ package ${package}.item;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
 <#compress>
+<#if (data.usageCount == 0) && (data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade" || data.toolType == "Hoe" || data.toolType == "MultiTool")>
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+</#if>
 <#if data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade"
 		|| data.toolType == "Hoe" || data.toolType == "Shears" || data.toolType == "Shield" || data.toolType == "MultiTool">
 public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?replace("MultiTool", "Tiered")}Item {
@@ -90,14 +93,14 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 			TOOL_TIER,
 			</#if>
 			new Item.Properties()
-				<#if data.toolType == "Shears" || data.toolType == "Shield">
+				<#if (data.usageCount != 0) && (data.toolType == "Shears" || data.toolType == "Shield")>
 				.durability(${data.usageCount})
 				</#if>
 				<#if data.toolType == "MultiTool">
 				.attributes(ItemAttributeModifiers.builder()
-						.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", ${data.damageVsEntity - 1},
+						.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, ${data.damageVsEntity - 1},
 								AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-						.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", ${data.attackSpeed - 4},
+						.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, ${data.attackSpeed - 4},
 								AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 						.build())
 				<#elseif data.toolType == "Sword">
@@ -110,6 +113,12 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 				</#if>
 		);
 	}
+
+	<#if (data.usageCount == 0) && (data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade" || data.toolType == "Hoe" || data.toolType == "MultiTool")>
+	@SubscribeEvent public static void handleToolDamage(ModifyDefaultComponentsEvent event) {
+		event.modify(${JavaModName}Items.${data.getModElement().getRegistryNameUpper()}.get(), builder -> builder.remove(DataComponents.MAX_DAMAGE));
+	}
+	</#if>
 
 	<#if hasProcedure(data.additionalDropCondition) && data.toolType!="MultiTool">
 	@Override public boolean isCorrectToolForDrops(ItemStack itemstack, BlockState blockstate) {
@@ -154,12 +163,12 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 			</#if>
 		}
 
-		@Override public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
-			return ToolActions.DEFAULT_AXE_ACTIONS.contains(toolAction) ||
-					ToolActions.DEFAULT_HOE_ACTIONS.contains(toolAction) ||
-					ToolActions.DEFAULT_SHOVEL_ACTIONS.contains(toolAction) ||
-					ToolActions.DEFAULT_PICKAXE_ACTIONS.contains(toolAction) ||
-					ToolActions.DEFAULT_SWORD_ACTIONS.contains(toolAction);
+		@Override public boolean canPerformAction(ItemStack stack, ItemAbility toolAction) {
+			return ItemAbilities.DEFAULT_AXE_ACTIONS.contains(toolAction) ||
+					ItemAbilities.DEFAULT_HOE_ACTIONS.contains(toolAction) ||
+					ItemAbilities.DEFAULT_SHOVEL_ACTIONS.contains(toolAction) ||
+					ItemAbilities.DEFAULT_PICKAXE_ACTIONS.contains(toolAction) ||
+					ItemAbilities.DEFAULT_SWORD_ACTIONS.contains(toolAction);
 		}
 
 		@Override public float getDestroySpeed(ItemStack itemstack, BlockState blockstate) {
@@ -187,14 +196,16 @@ public class ${name}Item extends Item {
 
 	public ${name}Item() {
 		super(new Item.Properties()
+			<#if data.usageCount != 0>
 			.durability(${data.usageCount})
+			</#if>
 			<#if data.immuneToFire>
 			.fireResistant()
 			</#if>
 			.attributes(ItemAttributeModifiers.builder()
-				.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", ${data.damageVsEntity - 1},
+				.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, ${data.damageVsEntity - 1},
 						AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-				.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", ${data.attackSpeed - 4},
+				.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, ${data.attackSpeed - 4},
 						AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 				.build())
 		);
@@ -221,7 +232,9 @@ public class ${name}Item extends FishingRodItem {
 
 	public ${name}Item() {
 		super(new Item.Properties()
+			<#if data.usageCount != 0>
 			.durability(${data.usageCount})
+			</#if>
 			<#if data.immuneToFire>
 			.fireResistant()
 			</#if>

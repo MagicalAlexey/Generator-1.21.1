@@ -38,8 +38,8 @@ import net.minecraft.network.chat.Component;
 public class ${name}Item extends Item {
 
 	public ${name}Item() {
-		super(
-			new Item.Properties().stacksTo(1).rarity(Rarity.${data.rarity}).jukeboxPlayable(${name}JukeboxSong.${name}));
+		super(new Item.Properties().stacksTo(1).rarity(Rarity.${data.rarity})
+				.jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG, ResourceLocation.fromNamespaceAndPath(${JavaModName}.MODID, "${registryname}"))));
 	}
 
 	<@addSpecialInformation data.specialInformation/>

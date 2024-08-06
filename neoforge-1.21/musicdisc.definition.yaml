@@ -1,12 +1,12 @@
 templates:
   - template: musicdisc.java.ftl
     name: "@SRCROOT/@BASEPACKAGEPATH/item/@NAMEItem.java"
+  - template: json/musicdisc.json.ftl
+    writer: json
+    name: "@MODDATAROOT/jukebox_song/@registryname.json"
   - template: json/item.json.ftl
     writer: json
     name: "@MODASSETSROOT/models/item/@registryname.json"
-  - template: json/jukebox_songs.json.ftl
-    writer: json
-    name: "@MODDATAROOT/@BASEPACKAGEPATH/jukebox_song/@registryname.json"
 
 tags:
   - tag: ITEMS:minecraft:music_discs
