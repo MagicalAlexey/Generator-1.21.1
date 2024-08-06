@@ -1,6 +1,6 @@
 name: NeoForge for @minecraft (@buildfileversion)
 status: stable
-buildfileversion: 21.0.143
+buildfileversion: 21.0.151
 
 import:
   - datapack-1.21
@@ -43,7 +43,7 @@ server_run_dir: "@WORKSPACEROOT/runs/server"
 
 # specific resource folders
 sounds_dir: "@MODASSETSROOT/sounds"
-structures_dir: "@MODDATAROOT/structures"
+structures_dir: "@MODDATAROOT/structure"
 block_textures_dir: "@MODASSETSROOT/textures/block"
 item_textures_dir: "@MODASSETSROOT/textures/item"
 entity_textures_dir: "@MODASSETSROOT/textures/entities"
