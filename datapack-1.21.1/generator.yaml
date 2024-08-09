@@ -14,7 +14,7 @@ mod_data_root: "@RESROOT/data/@modid"
 screen_textures_dir: "@MODASSETSROOT/textures/screens"
 
 # specific resource folders
-structures_dir: "@MODDATAROOT/structure"
+structures_dir: "@MODDATAROOT/structures"
 
 base_templates:
   - template: pack.mcmeta.ftl
