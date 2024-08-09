@@ -53,6 +53,12 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 
 public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements RangedAttackMob</#if> {
 
+	<#if data.mobBehaviourType == "Raider">
+	public static final EnumProxy<Raid.RaiderType> RAIDER_TYPE = new EnumProxy<>(Raid.RaiderType.class,
+		${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}, new int[] {0, ${data.raidSpawnsCount[0]}, ${data.raidSpawnsCount[1]}, ${data.raidSpawnsCount[2]}, ${data.raidSpawnsCount[3]}, ${data.raidSpawnsCount[4]}, ${data.raidSpawnsCount[5]}, ${data.raidSpawnsCount[6]}}
+	);
+	</#if>
+
 	<#list data.entityDataEntries as entry>
 		<#if entry.value().getClass().getSimpleName() == "Integer">
 			public static final EntityDataAccessor<Integer> DATA_${entry.property().getName()} = SynchedEntityData.defineId(${name}Entity.class, EntityDataSerializers.INT);
@@ -219,8 +225,8 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 	</#if>
 
 	<#if !data.mobDrop.isEmpty()>
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
-        super.dropCustomDeathLoot(source, looting, recentlyHitIn);
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
+        super.dropCustomDeathLoot(serverLevel, source, recentlyHitIn);
         this.spawnAtLocation(${mappedMCItemToItemStackCode(data.mobDrop, 1)});
    	}
 	</#if>
@@ -429,7 +435,7 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 		super.dropEquipment();
 		for (int i = 0; i < inventory.getSlots(); ++i) {
 			ItemStack itemstack = inventory.getStackInSlot(i);
-			if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack)) {
+			if (!itemstack.isEmpty() && !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
 				this.spawnAtLocation(itemstack);
 			}
 		}
@@ -629,7 +635,7 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 				<#if !data.rangedAttackItem.isEmpty()>
 				${name}EntityProjectile entityarrow = new ${name}EntityProjectile(${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}_PROJECTILE.get(), this, this.level());
 				<#else>
-				Arrow entityarrow = new Arrow(this.level(), this, new ItemStack(Items.ARROW));
+				Arrow entityarrow = new Arrow(this.level(), this, new ItemStack(Items.ARROW), null);
 				</#if>
 				double d0 = target.getY() + target.getEyeHeight() - 1.1;
 				double d1 = target.getX() - this.getX();
@@ -714,10 +720,6 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 	</#if>
 
 	<#if data.isBoss>
-	@Override public boolean canChangeDimensions() {
-		return false;
-	}
-
 	@Override public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
 		this.bossInfo.addPlayer(player);
@@ -843,7 +845,7 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 					<#else>
 					Mob::checkMobSpawnRules
 					</#if>,
-				RegisterSpawnPlacementsEvent.Operation.REPLACE
+					RegisterSpawnPlacementsEvent.Operation.REPLACE
 			);
 			<#elseif data.mobSpawningType == "waterCreature" || data.mobSpawningType == "waterAmbient">
 			event.register(${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}.get(),
@@ -860,7 +862,7 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 							(world.getBlockState(pos).is(Blocks.WATER) &&
 							world.getBlockState(pos.above()).is(Blocks.WATER))
 					</#if>,
-				RegisterSpawnPlacementsEvent.Operation.REPLACE
+					RegisterSpawnPlacementsEvent.Operation.REPLACE
 			);
 			<#elseif data.mobSpawningType == "undergroundWaterCreature">
 			event.register(${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}.get(),
@@ -879,7 +881,7 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 							pos.getY() >= (world.getSeaLevel() - 13) &&
 							pos.getY() <= world.getSeaLevel())
 					</#if>,
-				RegisterSpawnPlacementsEvent.Operation.REPLACE
+					RegisterSpawnPlacementsEvent.Operation.REPLACE
 			);
 			<#else>
 			event.register(${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}.get(),
@@ -897,18 +899,14 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 								Monster.isDarkEnoughToSpawn(world, pos, random) &&
 								Mob.checkMobSpawnRules(entityType, world, reason, pos, random))
 					</#if>,
-				RegisterSpawnPlacementsEvent.Operation.REPLACE
+					RegisterSpawnPlacementsEvent.Operation.REPLACE
 			);
 			</#if>
-		</#if>
-
-		<#if data.mobBehaviourType == "Raider">
-		Raid.RaiderType.create("${registryname}", ${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}.get(), new int[]{0, ${data.raidSpawnsCount[0]}, ${data.raidSpawnsCount[1]}, ${data.raidSpawnsCount[2]}, ${data.raidSpawnsCount[3]}, ${data.raidSpawnsCount[4]}, ${data.raidSpawnsCount[5]}, ${data.raidSpawnsCount[6]}});
 		</#if>
 	}
 
 	<#if data.mobBehaviourType == "Raider">
-	@Override public void applyRaidBuffs(int num, boolean logic) {}
+	@Override public void applyRaidBuffs(ServerLevel serverLevel, int num, boolean logic) {}
 	</#if>
 
 	public static AttributeSupplier.Builder createAttributes() {

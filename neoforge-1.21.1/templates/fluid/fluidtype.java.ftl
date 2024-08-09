@@ -33,7 +33,7 @@
 package ${package}.fluid.types;
 
 <#compress>
-public class ${name}FluidType extends FluidType {
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD) public class ${name}FluidType extends FluidType {
 	public ${name}FluidType() {
 		super(FluidType.Properties.create()
 			<#if data.type == "WATER">
@@ -63,8 +63,8 @@ public class ${name}FluidType extends FluidType {
 			.sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH));
 	}
 
-	@Override public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-		consumer.accept(new IClientFluidTypeExtensions() {
+	@SubscribeEvent public static void registerFluidTypeExtensions(RegisterClientExtensionsEvent event) {
+		event.registerFluidType(new IClientFluidTypeExtensions() {
 			private static final ResourceLocation STILL_TEXTURE = ResourceLocation.parse("${data.textureStill.format("%s:block/%s")}"),
 				FLOWING_TEXTURE = ResourceLocation.parse("${data.textureFlowing.format("%s:block/%s")}");
 
@@ -120,7 +120,6 @@ public class ${name}FluidType extends FluidType {
 					</#if> | 0xFF000000;
 				}
 				</#if>
-			}
-		);
+		}, ${JavaModName}FluidTypes.${data.getModElement().getRegistryNameUpper()}_TYPE.get());
 	}
 }</#compress>
